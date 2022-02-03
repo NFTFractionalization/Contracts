@@ -10,6 +10,7 @@ contract NFToken is ERC20 {
 
     /*
     DONT USE THIS IN PRODUCTION, IT MIGHT LET ANYBODY APPROVE ANY TOKEN TO ANYWHERE!!!!
+    honestly tho, im not sure.
     */
     function approve(address owner, address spender, uint256 amount) public {
         _approve(owner, spender, amount*(10**18));

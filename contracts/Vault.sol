@@ -81,7 +81,7 @@ contract Vault is ERC721Holder{
     YOU CAN ONLY WITHDRAW EVEN NUMBER OF TOKENS!!!!
     */
     function withdrawNFToken(uint256 internalId, address account, uint256 amount) public {
-        require(amount >= getDepositAmount(internalId, account), "You do not have that many tokens");
+        require(amount <= getDepositAmount(internalId, account), "You do not have that many tokens");
         deposits[account][internalId] -= amount;
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
         nfToken.transfer(account, amount*(10**18));
