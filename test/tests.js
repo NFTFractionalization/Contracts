@@ -41,12 +41,7 @@ describe("Greeter", function () {
       minter = await Minter.deploy();
       await minter.deployed();
 
-<<<<<<< HEAD
-      console.log("Hit!")
 
-      const Vault = await ethers.getContractFactory("Vault");
-      vault = await Vault.deploy(wEth.address, owner.address);
-=======
       const FixedMath = await ethers.getContractFactory("FixedMath");
       fixedMath = await FixedMath.deploy();
       await fixedMath.deployed();
@@ -56,8 +51,7 @@ describe("Greeter", function () {
           FixedMath: fixedMath.address,
         },
       });
-      vault = await Vault.deploy(wEth.address);
->>>>>>> cc18ef55619faa74d87d2e2f8a7c9a38e25b9acf
+      vault = await Vault.deploy(wEth.address, owner.address);
       await vault.deployed();
     });
 
