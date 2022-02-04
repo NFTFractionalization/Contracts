@@ -94,15 +94,23 @@ describe("Greeter", function () {
       /*
         frac token buying 
       */
-      // Test wEth
       await wEth.give(ethers.utils.parseUnits("1000000000000", 18));
-      await wEth.increaseAllowance(vault.address, ethers.utils.parseUnits("1000000000000", 18));
-      await wEth.allowance(owner.address, vault.address);
+      await wEth.approve(vault.address, ethers.utils.parseUnits("1000000000000", 18));
       await vault.buyTokensIndividual(tokenInternalId, ethers.utils.parseUnits("43", 18));
       expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43);
       expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43);
       expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43);
       expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43);
+
+      /*
+        frac token selling
+      */
+      await fracTokenContract.approve(vault.address, ethers.utils.parseUnits("1000000", 18))
+      await vault.sellTokensIndividual(tokenInternalId, ethers.utils.parseUnits("20", 18));
+      expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43 + 20);
+      expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43 - 20);
+      expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43 - 20);
+      expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43 + 20);
     })
   })
 });
