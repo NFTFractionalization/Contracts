@@ -77,11 +77,19 @@ describe("Greeter", function () {
         fracTokenAddr
       );
 
+      /*
+        frac token supply and balance testing
+      */
       expect((await fracTokenContract.totalSupply()) / 10**18).to.equal(1000000);
       expect((await fracTokenContract.balanceOf(vault.address) ) / 10**18).to.equal(500000);
       expect((await fracTokenContract.balanceOf(owner.address) ) / 10**18).to.equal(500000);
+      expect((await vault.getNFTokenBalance(tokenInternalId, vault.address)) / 10**18).to.equal(500000);
+      expect((await vault.getNFTokenBalance(tokenInternalId, owner.address)) / 10**18).to.equal(500000);
 
-      expect(await vault.getNFTokenBalance(tokenInternalId, vault.address));
+      /*
+        frac token buying 
+      */
+        
 
     })
   })
