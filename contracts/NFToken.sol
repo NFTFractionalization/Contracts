@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract NFToken is ERC20 {
     constructor(address reciever, uint256 initialSupply, string memory name, string memory ticker) ERC20(name, ticker) {
-        _mint(reciever, initialSupply*(10**18));
+        _mint(reciever, initialSupply);
     }
 
     /*
@@ -13,6 +13,6 @@ contract NFToken is ERC20 {
     honestly tho, im not sure.
     */
     function thirdPartyApprove(address owner, address spender, uint256 amount) public {
-        _approve(owner, spender, amount*(10**18));
+        _approve(owner, spender, amount);
     }
 }

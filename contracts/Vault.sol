@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Vault is ERC721Holder{
 
     struct RecievedNFT{
+        string chain;
         uint256 internalId;
         address nftAddr;
         uint256 tokenId;
@@ -24,7 +25,8 @@ contract Vault is ERC721Holder{
     uint256 internalIdCounter = 0;
 
     event Recieved(address from, uint256 tokenId, uint256 internalId, address nftAddr);
-
+    event Released(address to, uint256 tokenId, uint256 internalId, address nftAddr);
+    
     //mapping(interalIds => RecievedNFT)
     mapping(uint256 => RecievedNFT) recievedNfts;
 
@@ -134,41 +136,29 @@ contract Vault is ERC721Holder{
         return recievedNfts[internalId].nftAddr;
     }
 
-    /*
-    Returns total supply of tokens DIVIDED by (10**18)
-    */
     function getNFTokenSupply(uint256 internalId) public view returns(uint256) {
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
-        return nfToken.totalSupply()/(10**18);
+        return nfToken.totalSupply();
     }
 
-    /*
-    YOU CAN ONLY WITHDRAW EVEN NUMBER OF TOKENS!!!!
-    */
     function withdrawNFToken(uint256 internalId, address account, uint256 amount) public {
         require(amount <= getDepositAmount(internalId, account), "You do not have that many tokens");
         deposits[account][internalId] -= amount;
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
-        nfToken.transfer(account, amount*(10**18));
+        nfToken.transfer(account, amount);
     }
 
     function getDepositAmount(uint256 internalId, address account) public view returns(uint256){
         return deposits[account][internalId];
     }
 
-    /*
-    YOU CAN ONLY DEPOSIT EVEN NUMBER OF TOKENS!!!!
-    */
     function depositNFToken(uint256 internalId, address account, uint256 amount) public {
         require(getNFTokenBalance(internalId, account) >= amount, "You do not have that many tokens.");
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
-        nfToken.transferFrom(account, address(this), amount*(10**18));
+        nfToken.transferFrom(account, address(this), amount);
         deposits[account][internalId] += amount;
     }
 
-    /*
-    CAN ONLY APPROVE EVEN NUMBERS!!!
-    */
     function approveNFTokenTransfer(uint256 internalId, address account, uint256 amount) public {
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
         nfToken.thirdPartyApprove(account, address(this), amount);
@@ -176,7 +166,7 @@ contract Vault is ERC721Holder{
 
     function getNFTokenBalance(uint256 internalId, address account) public view returns(uint256){
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
-        return nfToken.balanceOf(address(account))/(10**18);
+        return nfToken.balanceOf(address(account));
     }
 
     /*
