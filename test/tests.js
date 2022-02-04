@@ -99,8 +99,10 @@ describe("Greeter", function () {
       await wEth.increaseAllowance(vault.address, ethers.utils.parseUnits("1000000000000", 18));
       await wEth.allowance(owner.address, vault.address);
       await vault.buyTokensIndividual(tokenInternalId, ethers.utils.parseUnits("43", 18));
-      expect(await wEth.balanceOf(owner.address) /10**18).to.almost.equal(1000000000000 - 43);
-      
+      expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43);
+      expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43);
+      expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43);
+      expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43);
     })
   })
 });
