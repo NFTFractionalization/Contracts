@@ -6,10 +6,14 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./NFToken.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Vault is ERC721Holder{
+import "@openzeppelin/contracts/access/AccessControl.sol";
+
+contract Vault is ERC721Holder, AccessControl{
 
     struct RecievedNFT{
         string chain;
+        //true if nft is NOT XChain
+        bool native;
         uint256 internalId;
         address nftAddr;
         uint256 tokenId;
@@ -20,10 +24,15 @@ contract Vault is ERC721Holder{
         bool owned;
     }
 
+    bytes32 public constant OWNER = keccak256("OWNER");
+    bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
+
     address wEthAddr;
 
     uint256 internalIdCounter = 0;
 
+    event XChainRegistered(address from, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
+    event XChainRelease(address to, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
     event Recieved(address from, uint256 tokenId, uint256 internalId, address nftAddr);
     event Released(address to, uint256 tokenId, uint256 internalId, address nftAddr);
     
@@ -37,8 +46,44 @@ contract Vault is ERC721Holder{
     mapping(address => uint256[]) ownedInternalIds;
     mapping(address => uint256) numIdsOwned;
 
-    constructor(address _wEthAddr){
+    constructor(address _wEthAddr, address oracle){
         wEthAddr = _wEthAddr;
+
+        _setupRole(OWNER, msg.sender);
+
+        _setupRole(ORACLE_ROLE, oracle);
+
+        _setRoleAdmin(ORACLE_ROLE, OWNER);
+    }
+
+    function grantOracle(address account) public onlyRole(OWNER){
+        _grantRole(ORACLE_ROLE, account);
+    }
+
+    /*
+    TODO: FIGURE OUT HOW TO HANDLE XCHAIN INTERNALIDS WITHOUT FUCKING EVERYTHING UP!!!
+     */
+
+    function registerXChainNFT(address sender, uint256 tokenId, uint256 internalId, address nftAddr, string memory chain) public onlyRole(ORACLE_ROLE) {
+        RecievedNFT memory recievedNft;
+        recievedNft.internalId = internalIdCounter;
+        recievedNft.nftAddr = nftAddr; 
+        recievedNft.sender = sender;
+        recievedNft.tokenId = tokenId;
+        recievedNft.tokenPrice = 1;
+        recievedNft.owned = true;
+        recievedNft.chain = chain;
+        recievedNft.native = false;
+
+        recievedNfts[internalIdCounter] = recievedNft;
+        
+        //Keep track of all Internal Ids ever owned by a user.
+        ownedInternalIds[recievedNft.nftAddr].push(recievedNft.internalId);
+        numIdsOwned[recievedNft.nftAddr] += 1;
+
+        emit XChainRegistered(sender, tokenId, internalId, nftAddr, chain);
+
+        internalIdCounter += 1;
     }
 
     function getwEthAddr() public returns(address){
@@ -92,6 +137,7 @@ contract Vault is ERC721Holder{
         recievedNft.tokenId = tokenId;
         recievedNft.tokenPrice = 1;
         recievedNft.owned = true;
+        recievedNft.native = true;
 
         recievedNfts[internalIdCounter] = recievedNft;
         
@@ -123,11 +169,26 @@ contract Vault is ERC721Holder{
     
     function buyoutERC721(uint256 internalId, address account) public {
         require(getDepositAmount(internalId, account) == getNFTokenSupply(internalId), "You have not deposited ALL of the fractionalized tokens");       
-        IERC721 erc721 = IERC721(getERC721ContractAddr(internalId));
-        erc721.transferFrom(address(this), account, getERC721TokenId(internalId));
-        
+        if(getERC721Native(internalId)){
+            IERC721 erc721 = IERC721(getERC721ContractAddr(internalId));
+            erc721.transferFrom(address(this), account, getERC721TokenId(internalId));
+        }
+        else{
+            emit XChainRelease(account, getERC721TokenId(internalId), internalId, getERC721ContractAddr(internalId), getERC721Chain(internalId));
+        }
+               
         //If nft gets bought out, decrement the senders owned internalIds
         numIdsOwned[recievedNfts[internalId].sender] -= 1;
+    }
+
+
+    //Returns true if ERC721 is NOT a XChain
+    function getERC721Native(uint256 internalId) public view returns(bool){
+        return recievedNfts[internalId].native;
+    }
+
+    function getERC721Chain(uint256 internalId) public view returns(string memory){
+        return recievedNfts[internalId].chain;
     }
 
     function getERC721TokenId(uint256 internalId) public view returns(uint256){

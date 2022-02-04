@@ -30,6 +30,7 @@ describe("Greeter", function () {
     var NFToken;
 
     beforeEach(async function(){
+      const [owner] = await ethers.getSigners();
       NFToken = await ethers.getContractFactory("NFToken");
 
       const WEth = await ethers.getContractFactory("wEth");
@@ -40,8 +41,10 @@ describe("Greeter", function () {
       minter = await Minter.deploy();
       await minter.deployed();
 
+      console.log("Hit!")
+
       const Vault = await ethers.getContractFactory("Vault");
-      vault = await Vault.deploy(wEth.address);
+      vault = await Vault.deploy(wEth.address, owner.address);
       await vault.deployed();
     });
 

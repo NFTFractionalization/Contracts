@@ -771,8 +771,8 @@
       ]
     },
     "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Vault.sol": {
-      "lastModificationDate": 1643952831579,
-      "contentHash": "7e8c140151fb9898367feefb0806847e",
+      "lastModificationDate": 1643977112917,
+      "contentHash": "386febad4b5ad54edc7f41f805145dac",
       "sourceName": "contracts/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -801,7 +801,8 @@
         "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
         "./NFToken.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -885,8 +886,8 @@
       ]
     },
     "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/XChainVault.sol": {
-      "lastModificationDate": 1643949893059,
-      "contentHash": "126ee3f943c17d49c32dcb8f95929325",
+      "lastModificationDate": 1643975455137,
+      "contentHash": "e6b361287e19d18773c149233542b4c0",
       "sourceName": "contracts/XChainVault.sol",
       "solcConfig": {
         "version": "0.8.4",
