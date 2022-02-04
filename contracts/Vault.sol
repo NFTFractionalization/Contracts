@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "./NFToken.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {FixedMath} from "./FixedMath.sol";
 
 contract Vault is ERC721Holder{
 
@@ -39,6 +40,15 @@ contract Vault is ERC721Holder{
 
     constructor(address _wEthAddr){
         wEthAddr = _wEthAddr;
+    }
+
+    function sigmoid(int256 a, int256 b, int c, int256 x) public returns(int256){
+        int256 denom = FixedMath.sqrt(FixedMath.add(c, (FixedMath.add(x, -b))**2));
+        int256 numor = x - b;
+        int256 fract = FixedMath.divide(numor, denom);
+        int256 left = FixedMath.add(1, fract);
+        int256 y = FixedMath.multiply(a, left);
+        return y;
     }
 
     function getwEthAddr() public returns(address){
