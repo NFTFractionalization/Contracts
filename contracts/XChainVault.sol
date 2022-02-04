@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract XChainVault is ERC721Holder{
+contract XChainVault is ERC721Holder, AccessControl{
 
     struct RecievedNFT{
         uint256 internalId;
@@ -29,12 +29,21 @@ contract XChainVault is ERC721Holder{
     event XChainRecieved(address from, uint256 tokenId, uint256 internalId, address nftAddr);
     event XChainReleased(address to, uint256 tokenId, uint256 internalId, address nftAddr);
 
+    bytes32 public constant OWNER = keccak256("OWNER");
     bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
 
-/*
+
     constructor(address oracle){
+        _setupRole(OWNER, msg.sender);
+
+        _setRoleAdmin(ORACLE_ROLE, OWNER);
+
         _setupRole(ORACLE_ROLE, oracle);
-    }*/
+    }
+
+    function grantOracle(address account) public onlyRole(OWNER){
+        _grantRole(ORACLE_ROLE, account);
+    }
 
     function onERC721Received(address operator, address from, uint256 tokenId, bytes memory data) public override returns(bytes4){
         RecievedNFT memory recievedNft;
@@ -56,16 +65,15 @@ contract XChainVault is ERC721Holder{
         return this.onERC721Received.selector;
     }
 
-    /*
     function releaseNFT(address to, uint256 internalId) public onlyRole(ORACLE_ROLE) {
         IERC721 erc721 = IERC721(getERC721ContractAddr(internalId));
-        erc721.transferFrom(address(this), account, getERC721TokenId(internalId));
+        erc721.transferFrom(address(this), to, getERC721TokenId(internalId));
         
         //If nft gets bought out, decrement the senders owned internalIds
         numIdsOwned[recievedNfts[internalId].sender] -= 1;
 
-        emit XChainReleased(to, getERC721TokenId(internalId), internalId, nftAddr);
-    }*/
+        emit XChainReleased(to, getERC721TokenId(internalId), internalId, getERC721ContractAddr(internalId));
+    }
 
     function getERC721TokenId(uint256 internalId) public view returns(uint256){
         return recievedNfts[internalId].tokenId;
