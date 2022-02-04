@@ -79,8 +79,8 @@ contract Vault is ERC721Holder{
     }
 
     // For individual buys
-    function buyTokensIndividual(uint256 internalId, uint256 amount) public {
-        buyTokens(internalId, amount, msg.sender);
+    function buyTokensIndividual(uint256 internalId, uint256 amountOfFrac) public {
+        buyTokens(internalId, amountOfFrac, msg.sender);
     }
 
     function onERC721Received(address operator, address from, uint256 tokenId, bytes memory data) public override returns(bytes4){
@@ -89,6 +89,7 @@ contract Vault is ERC721Holder{
         recievedNft.nftAddr = msg.sender; 
         recievedNft.sender = from;
         recievedNft.tokenId = tokenId;
+        recievedNft.tokenPrice = 1;
         recievedNft.owned = true;
 
         recievedNfts[internalIdCounter] = recievedNft;
