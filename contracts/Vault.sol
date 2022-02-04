@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "./NFToken.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {FixedMath} from "./FixedMath.sol";
+//import {FixedMath} from "./FixedMath.sol";
 
 contract Vault is ERC721Holder{
+    //using FixedMath for int256;
 
     struct RecievedNFT{
         string chain;
@@ -42,14 +43,22 @@ contract Vault is ERC721Holder{
         wEthAddr = _wEthAddr;
     }
 
-    function sigmoid(int256 a, int256 b, int c, int256 x) public returns(int256){
-        int256 denom = FixedMath.sqrt(FixedMath.add(c, (FixedMath.add(x, -b))**2));
-        int256 numor = x - b;
-        int256 fract = FixedMath.divide(numor, denom);
-        int256 left = FixedMath.add(1, fract);
-        int256 y = FixedMath.multiply(a, left);
-        return y;
-    }
+    // function sigmoid(int256 a, int256 b, int c, int256 x) public returns(int256){
+    //     // int256 numerator = int256(x) - midpoint;
+    //     // int256 innerSqrt = (steepness + (numerator)**2);
+    //     // int256 fixedInner = innerSqrt.toFixed();
+    //     // int256 fixedDenominator = fixedInner.sqrt();
+    //     // int256 fixedNumerator = numerator.toFixed();
+    //     // int256 midVal = fixedNumerator.divide(fixedDenominator) + 1000000000000000000000000;
+    //     // int256 fixedFinal = maxPrice.toFixed() * midVal;
+    //     // return int256(fixedFinal / 1000000000000000000000000000000);
+    //     int256 denom = FixedMath.sqrt(FixedMath.add(c, (FixedMath.add(x, -b))**2));
+    //     int256 numor = x - b;
+    //     int256 fract = FixedMath.divide(numor, denom);
+    //     int256 left = FixedMath.add(1, fract);
+    //     int256 y = FixedMath.multiply(a, left);
+    //     return y;
+    // }
 
     function getwEthAddr() public returns(address){
         return wEthAddr;

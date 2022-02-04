@@ -37,8 +37,8 @@
       ]
     },
     "/Users/danielleavitt/Documents/Buckets/Contracts/contracts/Vault.sol": {
-      "lastModificationDate": 1643954158929,
-      "contentHash": "9f328c97aa9dad5dd129dd76e552ee1c",
+      "lastModificationDate": 1644018047097,
+      "contentHash": "209ee41a6af2db9bbcba7cc07ade1448",
       "sourceName": "contracts/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -67,8 +67,7 @@
         "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
         "./NFToken.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "./FixedMath.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
