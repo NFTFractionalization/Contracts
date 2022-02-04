@@ -30,6 +30,7 @@ describe("Greeter", function () {
     var NFToken;
 
     beforeEach(async function(){
+      const [owner] = await ethers.getSigners();
       NFToken = await ethers.getContractFactory("NFToken");
 
       const WEth = await ethers.getContractFactory("wEth");

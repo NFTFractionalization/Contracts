@@ -38,11 +38,11 @@ describe("Greeter", function () {
       await minter.deployed();
 
       const Vault = await ethers.getContractFactory("Vault");
-      vault = await Vault.deploy(wEth.address);
+      vault = await Vault.deploy(wEth.address, owner.address);
       await vault.deployed();
 
       const XChainVault = await ethers.getContractFactory("XChainVault");
-      xchainvault = await XChainVault.deploy(owner.address);
+      xchainvault = await XChainVault.deploy(owner.address, "Ethereum");
       await xchainvault.deployed();
 
     });
@@ -69,7 +69,7 @@ describe("Greeter", function () {
       
       await expect(await minter.safeTransfer(owner.address, xchainvault.address, 1))
       .to.emit(xchainvault, "XChainRecieved")
-      .withArgs(owner.address, 1, 0, minter.address);
+      .withArgs(owner.address, 1, 0, minter.address, "Ethereum");
 
       expect(await xchainvault.getNumberDepositedERC721s()).to.equal(1);
       
