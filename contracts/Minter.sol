@@ -22,4 +22,8 @@ contract Minter is ERC721URIStorage {
 
         return newItemId;
     }
+
+    function safeTransfer(address from, address to, uint256 tokenId) public {
+        safeTransferFrom(from, to, tokenId);
+    }
 }
