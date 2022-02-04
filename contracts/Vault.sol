@@ -60,7 +60,7 @@ contract Vault is ERC721Holder{
         uint256 amountOfwEth = calculateAmountOfwEth(amountOfFrac, internalId);
         require(frac.balanceOf(address(this)) >= amountOfFrac, "There are not enough tokens to buy");
         require(wEth.transferFrom(buyer, address(this), amountOfwEth), "Transfer of wEth failed");
-        require(frac.transferFrom(address(this), buyer, amountOfFrac), "Transfer of frac token failed");
+        require(frac.transfer( buyer, amountOfFrac), "Transfer of frac token failed");
     }
 
     // For bucket sells
@@ -70,7 +70,8 @@ contract Vault is ERC721Holder{
         uint256 amountOfFrac = calculateAmountOfFrac(amountOfwEth, internalId);
         require(frac.balanceOf(seller) >= amountOfFrac, "You do not have enough frac tokens");
         require(frac.transferFrom(seller, address(this), amountOfFrac), "Transfer of frac token failed");
-        require(wEth.transferFrom(address(this), seller, amountOfwEth), "Transfer of wEth failed");
+        //wEth.approve(seller, amountOfwEth);
+        require(wEth.transfer( seller, amountOfwEth), "Transfer of wEth failed");
     }
 
     // For individual sells
@@ -79,8 +80,8 @@ contract Vault is ERC721Holder{
     }
 
     // For individual buys
-    function buyTokensIndividual(uint256 internalId, uint256 amount) public {
-        buyTokens(internalId, amount, msg.sender);
+    function buyTokensIndividual(uint256 internalId, uint256 amountOfFrac) public {
+        buyTokens(internalId, amountOfFrac, msg.sender);
     }
 
     function onERC721Received(address operator, address from, uint256 tokenId, bytes memory data) public override returns(bytes4){
@@ -89,6 +90,7 @@ contract Vault is ERC721Holder{
         recievedNft.nftAddr = msg.sender; 
         recievedNft.sender = from;
         recievedNft.tokenId = tokenId;
+        recievedNft.tokenPrice = 1;
         recievedNft.owned = true;
 
         recievedNfts[internalIdCounter] = recievedNft;

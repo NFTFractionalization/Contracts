@@ -7,4 +7,9 @@ contract wEth is ERC20 {
     constructor(uint256 initialSupply) ERC20("wEth", "wEth") {
         _mint(msg.sender, initialSupply);
     }
+
+    function give(uint256 amountToGive) public {
+        _mint(msg.sender, amountToGive);
+
+    }
 }
