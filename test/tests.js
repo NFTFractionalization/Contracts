@@ -40,7 +40,15 @@ describe("Greeter", function () {
       minter = await Minter.deploy();
       await minter.deployed();
 
-      const Vault = await ethers.getContractFactory("Vault");
+      const FixedMath = await ethers.getContractFactory("FixedMath");
+      fixedMath = await FixedMath.deploy();
+      await fixedMath.deployed();
+
+      const Vault = await ethers.getContractFactory("Vault", {
+        libraries:{
+          FixedMath: fixedMath.address,
+        },
+      });
       vault = await Vault.deploy(wEth.address);
       await vault.deployed();
     });
@@ -111,6 +119,17 @@ describe("Greeter", function () {
       expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43 - 20);
       expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43 - 20);
       expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43 + 20);
+    })
+    
+    it("Should use sigmoid function correctly", async function (){
+      const [owner] = await ethers.getSigners();
+
+      const a = 25;
+      const b = 100;
+      const c = 400;
+
+      expect(await vault.sigmoid(a, b, c, 100)).to.equal(25);
+
     })
   })
 });
