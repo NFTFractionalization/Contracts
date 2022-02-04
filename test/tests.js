@@ -70,14 +70,14 @@ describe("Greeter", function () {
 
       expect(await vault.getNumberDepositedERC721s()).to.equal(1);
       
-      await vault.mintTokensForNFT(mintSupply, tokenName, tokenTicker, tokenInternalId, amountToKeep);
+      await vault.mintTokensForNFT(ethers.utils.parseUnits(String(mintSupply), 18), tokenName, tokenTicker, tokenInternalId, amountToKeep);
 
       const fracTokenAddr = await vault.getNFTokenAddr(0);
       const fracTokenContract = await NFToken.attach(
         fracTokenAddr
       );
 
-      expect(fracTokenContract.balanceOf(vault.address));
+      expect(await fracTokenContract.balanceOf(vault.address)/(10**18)).to.be.equal(mintSupply);
 
     })
   })
