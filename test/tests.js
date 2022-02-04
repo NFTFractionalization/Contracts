@@ -77,7 +77,11 @@ describe("Greeter", function () {
         fracTokenAddr
       );
 
-      expect(fracTokenContract.balanceOf(vault.address));
+      expect((await fracTokenContract.balanceOf(vault.address) ) / 10**18).to.equal(500000);
+
+      expect(await vault.getNFTokenBalance(tokenInternalId, vault.address));
+
+
 
     })
   })

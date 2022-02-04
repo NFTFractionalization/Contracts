@@ -105,8 +105,8 @@ contract Vault is ERC721Holder{
         require(recievedNfts[internalId].sender == msg.sender, "You did not deposit this NFT.");
         require(recievedNfts[internalId].tokenAddr == address(0), "This NFT has already been fractionalized.");
         NFToken deployedERC = ERCDeployer(address(this), internalId, supply, name, ticker);
-        deployedERC.approve(address(this), amountToKeep);
-        deployedERC.transfer(recievedNfts[internalId].sender, amountToKeep);
+        deployedERC.approve(address(this), amountToKeep * 10**18);
+        deployedERC.transfer(recievedNfts[internalId].sender, amountToKeep * 10**18);
         recievedNfts[internalId].tokenAddr = address(deployedERC);
         return deployedERC;
     }
