@@ -1,4 +1,4 @@
-pragma solidity ^0.6.8;
+pragma solidity ^0.8.0;
 
 // Some inspiration were taken from FixidityLib, but stripped down as overflow is most likely not going to happen
 
