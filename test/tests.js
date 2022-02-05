@@ -160,25 +160,28 @@ describe("Greeter", function () {
 
     expect(await buckets.getNumberBucketsCreated()).to.equal(1);  // Verify that bucket was created
 
-    // Buy 5 buket tokens
+    // Buy 5 bucket tokens
     const buyAmount = 5;
+    // Verify prices
     expect(await vault.calculateAmountOfwEth(5, 0)).to.equal(5);
     expect(await buckets.calcBucketPrice(0, 5)).to.equal(25);
     
 
-    // await wEth.give(ethers.utils.parseUnits("1000000000000", 18));
-    // await wEth.approve(buckets.address, ethers.utils.parseUnits("1000000000000", 18));
-    // await buckets.buyBucket(0, ethers.utils.parseUnits(String(buyAmount), 18), owner.address);
+    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));
+    await wEth.approve(buckets.address, ethers.utils.parseUnits("1000000000000", 18));
+    await buckets.buyBucket(0, ethers.utils.parseUnits(String(buyAmount), 18), owner.address);
 
 
 
-    // const buckTokenAddr = await buckets.getBuckTokenAddr(0);  //Get Bucket0 token address
-    // console.log(buckTokenAddr);
-    // const buckTokenContract = await buckets.attach(
-    //   buckTokenAddr
-    // );
+    const buckTokenAddr = await buckets.getBuckTokenAddr(0);  //Get Bucket0 token address
+    console.log(buckTokenAddr);
+    const buckTokenContract = await NFToken.attach(
+      buckTokenAddr
+    );
+
+    expect(await buckTokenContract.totalSupply()).to.equal(5);
     
-    // expect(await buckTokenContract.balanceOf(owner.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
+    //expect(await buckTokenContract.balanceOf(owner.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
 
     // for(let i=0; i<numNFTs; i++){
     //   const fracTokenAddr = await vault.getNFTokenAddr(i);
