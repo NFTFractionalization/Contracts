@@ -699,8 +699,8 @@
       ]
     },
     "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Vault.sol": {
-      "lastModificationDate": 1644055596693,
-      "contentHash": "3e1f4e529ef7db7e943a35a929ff645b",
+      "lastModificationDate": 1644066108627,
+      "contentHash": "8b8508b057456d43674fa29e2f92a490",
       "sourceName": "contracts/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -728,9 +728,9 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "./NFToken.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/access/AccessControl.sol"
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -740,8 +740,8 @@
       ]
     },
     "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/NFToken.sol": {
-      "lastModificationDate": 1643943675127,
-      "contentHash": "46ff6d81bb41cd6d6aff62fe1493ef7a",
+      "lastModificationDate": 1644066027131,
+      "contentHash": "1b3b7039f90e9f3e5d8baf5e8fc26408",
       "sourceName": "contracts/NFToken.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -767,7 +767,8 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -925,8 +926,8 @@
       ]
     },
     "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Buckets.sol": {
-      "lastModificationDate": 1644046700844,
-      "contentHash": "02f47d9f75d12a506450de627a82d716",
+      "lastModificationDate": 1644068605489,
+      "contentHash": "249f6db898c78003589bcd51c401e591",
       "sourceName": "contracts/Buckets.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -958,7 +959,45 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Buckets"
+        "Buckets",
+        "IVault"
+      ]
+    },
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1643921689652,
+      "contentHash": "8398972af73b4e9e5ff3b31cad86234f",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
       ]
     }
   }

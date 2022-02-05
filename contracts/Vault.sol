@@ -3,12 +3,11 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./NFToken.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
-//import {FixedMath} from "./FixedMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Vault is ERC721Holder, AccessControl{
+contract Vault is ERC721Holder, Ownable{
     //using FixedMath for int256;
 
     struct RecievedNFT{
@@ -25,9 +24,6 @@ contract Vault is ERC721Holder, AccessControl{
         //Is this NFT still in our contract
         bool owned;
     }
-
-    bytes32 public constant OWNER = keccak256("OWNER");
-    bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
 
     address wEthAddr;
 
@@ -50,23 +46,13 @@ contract Vault is ERC721Holder, AccessControl{
 
     constructor(address _wEthAddr, address oracle){
         wEthAddr = _wEthAddr;
-
-        _setupRole(OWNER, msg.sender);
-
-        _setupRole(ORACLE_ROLE, oracle);
-
-        _setRoleAdmin(ORACLE_ROLE, OWNER);
-    }
-
-    function grantOracle(address account) public onlyRole(OWNER){
-        _grantRole(ORACLE_ROLE, account);
     }
 
     /*
     TODO: FIGURE OUT HOW TO HANDLE XCHAIN INTERNALIDS WITHOUT FUCKING EVERYTHING UP!!!
      */
 
-    function registerXChainNFT(address sender, uint256 tokenId, uint256 xChainInternalId, address nftAddr, uint256 chainId) public onlyRole(ORACLE_ROLE) {
+    function registerXChainNFT(address sender, uint256 tokenId, uint256 xChainInternalId, address nftAddr, uint256 chainId) public onlyOwner{
         RecievedNFT memory recievedNft;
         recievedNft.internalId = internalIdCounter;
         recievedNft.nftAddr = nftAddr; 
@@ -106,15 +92,15 @@ contract Vault is ERC721Holder, AccessControl{
     //     return y;
     // }
 
-    function getwEthAddr() public returns(address){
+    function getwEthAddr() public view returns(address){
         return wEthAddr;
     }
 
-    function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 internalId) public returns(uint256){
+    function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 internalId) public view returns(uint256){
         return recievedNfts[internalId].tokenPrice * _amountOfFrac;
     }
 
-    function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 internalId) public returns(uint256){
+    function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 internalId) public view returns(uint256){
         return _amountOfwEth / recievedNfts[internalId].tokenPrice; 
     }
 
@@ -174,14 +160,14 @@ contract Vault is ERC721Holder, AccessControl{
     function mintTokensForNFT(uint256 supply, string memory name, string memory ticker, uint256 internalId, uint256 amountToKeep) public returns(NFToken){
         require(recievedNfts[internalId].sender == msg.sender, "You did not deposit this NFT.");
         require(recievedNfts[internalId].tokenAddr == address(0), "This NFT has already been fractionalized.");
-        NFToken deployedERC = ERCDeployer(address(this), internalId, supply, name, ticker);
+        NFToken deployedERC = ERCDeployer(address(this), supply, name, ticker);
         deployedERC.approve(address(this), amountToKeep);
         deployedERC.transfer(recievedNfts[internalId].sender, amountToKeep);
         recievedNfts[internalId].tokenAddr = address(deployedERC);
         return deployedERC;
     }
 
-    function ERCDeployer(address reciever, uint256 internalId, uint256 supply, string memory name, string memory ticker) private returns(NFToken){
+    function ERCDeployer(address reciever, uint256 supply, string memory name, string memory ticker) private returns(NFToken){
         address[] memory defaultOperators;
         NFToken nfToken = new NFToken(reciever, supply, name, ticker);
         return nfToken;
@@ -283,6 +269,7 @@ contract Vault is ERC721Holder, AccessControl{
         return numIdsOwned[account];
     }
 
+/*
     // If anything is broken... its because of this function
     function getOwnedInternalIds(address account) public view returns(uint256[] memory){
         uint256 accountNumIdsOwned = getNumIdsOwned(account);
@@ -295,5 +282,5 @@ contract Vault is ERC721Holder, AccessControl{
             }
         }
         return(ownedIds);
-    }
+    }*/
 }
