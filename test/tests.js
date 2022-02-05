@@ -44,12 +44,12 @@ describe("Greeter", function () {
       // const FixedMath = await ethers.getContractFactory("FixedMath");
       // fixedMath = await FixedMath.deploy();
 
-      const Vault = await ethers.getContractFactory("Vault", /*{
+      const Vault = await ethers.getContractFactory("Vault"/*,{
         libraries: {
           FixedMath: "0x6985897120ca08f1CEAC3C8F909F6bfC9D6F4aa7",
         },
       }*/);
-      vault = await Vault.deploy(wEth.address);
+      vault = await Vault.deploy(wEth.address, owner.address);
       await vault.deployed();
 
 

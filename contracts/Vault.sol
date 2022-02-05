@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "./NFToken.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 //import {FixedMath} from "./FixedMath.sol";
 
-contract Vault is ERC721Holder{
+contract Vault is ERC721Holder, AccessControl{
     //using FixedMath for int256;
 
     struct RecievedNFT{
@@ -24,12 +25,24 @@ contract Vault is ERC721Holder{
         bool owned;
     }
 
+    struct Bucket{
+        string chain; 
+        bool native; //true if nft is NOT XChain
+        uint256 internalId;
+        uint256 tokenId;
+        address tokenAddr;
+        uint256 tokenPrice;
+        bool owned; // cross chain stuff 
+        uint256[] NFTIds; 
+    }
+
     bytes32 public constant OWNER = keccak256("OWNER");
     bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
 
     address wEthAddr;
 
     uint256 internalIdCounter = 0;
+    uint256 internalIdCounterBuckets = 0;
 
     event XChainRegistered(address from, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
     event XChainRelease(address to, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
@@ -39,12 +52,15 @@ contract Vault is ERC721Holder{
     //mapping(interalIds => RecievedNFT)
     mapping(uint256 => RecievedNFT) recievedNfts;
 
+    mapping(uint256 => Bucket) buckets;
+
     //mapping(wallet => mapping(internalIds => amountDeposited));
     mapping(address => mapping(uint256 => uint256)) deposits;
 
     //Keep track of all Internal Ids ever owned by a user.
     mapping(address => uint256[]) ownedInternalIds;
     mapping(address => uint256) numIdsOwned;
+
 
     constructor(address _wEthAddr, address oracle){
         wEthAddr = _wEthAddr;
@@ -54,6 +70,25 @@ contract Vault is ERC721Holder{
         _setupRole(ORACLE_ROLE, oracle);
 
         _setRoleAdmin(ORACLE_ROLE, OWNER);
+    }
+
+    function createBucket(uint256[] memory NFTIds, uint256 numNFTs, uint256 internalId, uint256 supply, string memory name, string memory ticker) public{
+        Bucket memory bucket;
+
+        bucket.internalId = internalId; 
+
+        NFToken BUCK = ERCDeployer(address(this), internalId, supply, name, ticker); 
+
+        bucket.tokenId = hashIds(NFTIds, numNFTs);
+        bucket.tokenAddr = address(BUCK);
+        bucket.tokenPrice = 1; // set this later (right now 1 wrapped eth per bucket)
+
+        bucket.NFTIds = NFTIds; 
+
+    }
+
+    function hashIds(uint256[] memory NFTIds, uint256 numNFTs) internal returns(uint256){
+
     }
 
     function grantOracle(address account) public onlyRole(OWNER){
