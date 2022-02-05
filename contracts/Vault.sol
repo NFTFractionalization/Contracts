@@ -104,35 +104,55 @@ contract Vault is ERC721Holder, Ownable{
         return _amountOfwEth / recievedNfts[internalId].tokenPrice; 
     }
 
-    // For bucket buys
-    function buyTokens(uint256 internalId, uint256 FracToBuy, address buyer) public{
-        IERC20 frac = IERC20(getNFTokenAddr(internalId));
+    //=======================================================
+    //  Buy tokens
+    //
+    //  1. Create FRAC and wEth objects
+    //  2. Calculate cost in wEth for amount of FRAC to buy
+    //  3. Make sure we have enough FRAC to give
+    //  4. Transfer wEth to us from buyer
+    //  5. Transfer FRAC to buyer from us
+    //=======================================================
+    function buyTokens(uint256 _internalId, uint256 _FracToBuy, address _buyer) public{
+        IERC20 frac = IERC20(getNFTokenAddr(_internalId));
         IERC20 wEth = IERC20(getwEthAddr());
-        uint256 costInwEth = calculateAmountOfwEth(FracToBuy, internalId);
-        require(frac.balanceOf(address(this)) >= FracToBuy, "There are not enough FRAC tokens to buy");
-        require(wEth.transferFrom(buyer, address(this), costInwEth), "Transfer of wEth failed");
-        require(frac.transfer( buyer, FracToBuy), "Transfer of FRAC token failed");
+        uint256 costInwEth = calculateAmountOfwEth(_FracToBuy, _internalId);
+        require(frac.balanceOf(address(this)) >= _FracToBuy, "There are not enough FRAC tokens to buy");
+        require(wEth.transferFrom(_buyer, address(this), costInwEth), "Transfer of wEth failed");
+        require(frac.transfer(_buyer, _FracToBuy), "Transfer of FRAC token failed");
     }
 
-    // For bucket sells
-    function sellTokens(uint256 internalId, uint256 amountOfwEth, address seller) public{
-        IERC20 frac = IERC20(getNFTokenAddr(internalId));
+    //================================================
+    //  Sell tokens
+    //
+    //  Steps are the same as buyTokens, except the
+    //  two transfers are in the opposite direction
+    //================================================
+    function sellTokens(uint256 _internalId, uint256 _FracToSell, address _seller) public{
+        IERC20 frac = IERC20(getNFTokenAddr(_internalId));
         IERC20 wEth = IERC20(getwEthAddr());
-        uint256 amountOfFrac = calculateAmountOfFrac(amountOfwEth, internalId);
-        require(frac.balanceOf(seller) >= amountOfFrac, "You do not have enough frac tokens");
-        require(frac.transferFrom(seller, address(this), amountOfFrac), "Transfer of frac token failed");
-        //wEth.approve(seller, amountOfwEth);
-        require(wEth.transfer( seller, amountOfwEth), "Transfer of wEth failed");
+        uint256 priceInwEth = calculateAmountOfwEth(_FracToSell, _internalId);
+        require(frac.balanceOf(_seller) >= _FracToSell, "You do not have enough frac tokens");
+        require(frac.transferFrom(_seller, address(this), _FracToSell), "Transfer of frac token failed");
+        require(wEth.transfer(_seller, priceInwEth), "Transfer of wEth failed");
     }
 
-    // For individual sells
+    //==========================================================
+    //  Buying individual tokens
+    //
+    //  Calls buyTokens with msg.sender as the buyer address
+    //==========================================================
+    function buyTokensIndividual(uint256 internalId, uint256 FracToBuy) public {
+        buyTokens(internalId, FracToBuy, msg.sender);
+    }
+
+    //==========================================================
+    //  Selling individual tokens
+    //
+    //  Calls sellTokens with msg.sender as the seller address
+    //==========================================================
     function sellTokensIndividual(uint256 internalId, uint256 amountOfwEth) public {
         sellTokens(internalId, amountOfwEth, msg.sender);
-    }
-
-    // For individual buys
-    function buyTokensIndividual(uint256 internalId, uint256 amountOfFrac) public {
-        buyTokens(internalId, amountOfFrac, msg.sender);
     }
 
     function onERC721Received(address operator, address from, uint256 tokenId, bytes memory data) public override returns(bytes4){
