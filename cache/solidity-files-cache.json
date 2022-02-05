@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/FixedMath.sol": {
-      "lastModificationDate": 1644013512094,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/FixedMath.sol": {
+      "lastModificationDate": 1643952892174,
       "contentHash": "61a446a45dda648a75418ebb09210ed3",
       "sourceName": "contracts/FixedMath.sol",
       "solcConfig": {
@@ -36,8 +36,8 @@
         "FixedMath"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/Greeter.sol": {
-      "lastModificationDate": 1644013512100,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Greeter.sol": {
+      "lastModificationDate": 1643921245761,
       "contentHash": "54c28c84e5277b35b8c8329ce9755dae",
       "sourceName": "contracts/Greeter.sol",
       "solcConfig": {
@@ -73,8 +73,8 @@
         "Greeter"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1644015014081,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1643921216195,
       "contentHash": "cc4777addd464ea56fa35b1c45df0591",
       "sourceName": "hardhat/console.sol",
       "solcConfig": {
@@ -108,8 +108,8 @@
         "console"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/Minter.sol": {
-      "lastModificationDate": 1644013512104,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Minter.sol": {
+      "lastModificationDate": 1643976685183,
       "contentHash": "f5c273310f39af1e878f355f5853fdd2",
       "sourceName": "contracts/Minter.sol",
       "solcConfig": {
@@ -146,8 +146,8 @@
         "Minter"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol": {
-      "lastModificationDate": 1644015341507,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol": {
+      "lastModificationDate": 1643921689636,
       "contentHash": "580a443491d9d70eb064b0130fc3cd01",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
       "solcConfig": {
@@ -183,8 +183,8 @@
         "ERC721URIStorage"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
-      "lastModificationDate": 1644015150238,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
+      "lastModificationDate": 1643921689624,
       "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
       "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
       "solcConfig": {
@@ -218,8 +218,8 @@
         "Counters"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
-      "lastModificationDate": 1644015276881,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
+      "lastModificationDate": 1643921689636,
       "contentHash": "ead7082e39cf31875ff89b22f473500d",
       "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
@@ -261,8 +261,8 @@
         "ERC721"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1644015276888,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+      "lastModificationDate": 1643921689648,
       "contentHash": "27d219ec6f69478d065fdbfa7931da68",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
@@ -298,8 +298,8 @@
         "IERC721"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1644015276845,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
+      "lastModificationDate": 1643921689648,
       "contentHash": "592df588492d45fdcf46b3cb608c0fbf",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
@@ -333,8 +333,8 @@
         "IERC721Receiver"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
-      "lastModificationDate": 1644015341519,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
+      "lastModificationDate": 1643921689648,
       "contentHash": "efbc0d15b80a74e34dbe8da0f3e879bb",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
       "solcConfig": {
@@ -370,8 +370,8 @@
         "IERC721Metadata"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1644015150247,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
+      "lastModificationDate": 1643921689624,
       "contentHash": "4cff8b2ea0d958750786b4e3ca308445",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -405,8 +405,8 @@
         "Address"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1644015150264,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1643921689624,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -440,8 +440,8 @@
         "Context"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1644015150268,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1643921689664,
       "contentHash": "9c54c6c065d9e590fdcdd72c451425b9",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -475,8 +475,8 @@
         "Strings"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1644015277244,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1643921689628,
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -512,8 +512,8 @@
         "ERC165"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1644015277250,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1643921689644,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -547,8 +547,8 @@
         "IERC165"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
-      "lastModificationDate": 1644015150151,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
+      "lastModificationDate": 1643921689624,
       "contentHash": "79af4d35ce7918696f13f0cb6653ec99",
       "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
@@ -587,8 +587,8 @@
         "AccessControl"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
-      "lastModificationDate": 1644015150146,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
+      "lastModificationDate": 1643921689640,
       "contentHash": "57c84298234411cea19c7c284d86be8b",
       "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
       "solcConfig": {
@@ -622,9 +622,9 @@
         "IAccessControl"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/XChainVault.sol": {
-      "lastModificationDate": 1644013512117,
-      "contentHash": "e6b361287e19d18773c149233542b4c0",
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/XChainVault.sol": {
+      "lastModificationDate": 1644045112824,
+      "contentHash": "7582cca40c518616cbbeff2617708cab",
       "sourceName": "contracts/XChainVault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -661,8 +661,8 @@
         "XChainVault"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol": {
-      "lastModificationDate": 1644015341496,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol": {
+      "lastModificationDate": 1643921689636,
       "contentHash": "54062ff887823a306b33ea6494a220bc",
       "sourceName": "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
       "solcConfig": {
@@ -698,9 +698,9 @@
         "ERC721Holder"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/Vault.sol": {
-      "lastModificationDate": 1644019856179,
-      "contentHash": "1ef24a53a58a21cecee47ca3d5225e69",
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Vault.sol": {
+      "lastModificationDate": 1644055596693,
+      "contentHash": "3e1f4e529ef7db7e943a35a929ff645b",
       "sourceName": "contracts/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -729,7 +729,7 @@
         "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
         "./NFToken.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/access/AccessControl.sol"
       ],
       "versionPragmas": [
@@ -739,8 +739,8 @@
         "Vault"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/NFToken.sol": {
-      "lastModificationDate": 1644013512108,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/NFToken.sol": {
+      "lastModificationDate": 1643943675127,
       "contentHash": "46ff6d81bb41cd6d6aff62fe1493ef7a",
       "sourceName": "contracts/NFToken.sol",
       "solcConfig": {
@@ -776,8 +776,8 @@
         "NFToken"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1644015276764,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "lastModificationDate": 1643921689632,
       "contentHash": "f48de0eaae9544072b8766e2eac528a7",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -815,8 +815,8 @@
         "ERC20"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1644015276760,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1643921689648,
       "contentHash": "302d9755e46bc69d7058b0cbe7185e37",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -850,8 +850,8 @@
         "IERC20"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1644015341375,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+      "lastModificationDate": 1643921689648,
       "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -887,8 +887,8 @@
         "IERC20Metadata"
       ]
     },
-    "/Users/sophiaparrett/Desktop/Hackathon#1/Contracts/contracts/wEth.sol": {
-      "lastModificationDate": 1644013512120,
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/wEth.sol": {
+      "lastModificationDate": 1643952831579,
       "contentHash": "cfe6676748297b12d4abe9a1539a001f",
       "sourceName": "contracts/wEth.sol",
       "solcConfig": {
@@ -922,6 +922,43 @@
       ],
       "artifacts": [
         "wEth"
+      ]
+    },
+    "/home/green/Programs/NFTFracts/Contracts/Contracts/contracts/Buckets.sol": {
+      "lastModificationDate": 1644046700844,
+      "contentHash": "02f47d9f75d12a506450de627a82d716",
+      "sourceName": "contracts/Buckets.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./NFToken.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Buckets"
       ]
     }
   }

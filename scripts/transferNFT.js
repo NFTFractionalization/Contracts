@@ -2,34 +2,28 @@ const hre = require("hardhat");
 
 async function main(){
 
-    const rpc = await new hre.ethers.providers.JsonRpcProvider(process.env.RPC_PROVIDER)
-    const owner = new hre.ethers.Wallet(process.env.PRIVATE_KEY0, rpc);
+    const rpc = await new hre.ethers.providers.JsonRpcProvider(process.env.BSC_RPC_PROVIDER)
+    const owner = new hre.ethers.Wallet(process.env.METAMASK_PK0, rpc);
 
     const Reciever = await hre.ethers.getContractFactory("XChainVault");
     const reciever = await Reciever.attach(
-        "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        "0xeC3676Ca25d450E0F799bAD6324274fBB59f8494"
     );
 
     const Minter = await hre.ethers.getContractFactory("Minter");
-    const minter = await Minter.deploy();
-    await minter.deployed();
-
-    await minter.mint(owner.address);
-    console.log("Deployed new contract addr and minted");
-
-    const ownerBal1 = await minter.balanceOf(owner.address);
-    console.log("Owner holds "+ownerBal1);
+    const minter = await Minter.attach(
+        "0x04eE2d0202D2124ba2a43720544ed35F21bb16D2"
+    );
 
     console.log("Transfering...");
-
-    await minter.safeTransfer(owner.address, reciever.address, 1);
+    console.log("Owner.address: "+owner.address);
+    await minter.safeTransfer(owner.address, reciever.address, 3);
 
     const ownerBal2 = await minter.balanceOf(owner.address);
     console.log("Owner holds " + ownerBal2);
 
     const recieverBal = await minter.balanceOf(reciever.address);
     console.log("Reciever holds "+recieverBal);
-
 }
 
 main()

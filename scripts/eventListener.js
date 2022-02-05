@@ -1,5 +1,6 @@
 const hre = require("hardhat");
 const fs = require("fs");
+const { Contract } = require("@ethersproject/contracts");
 
 function readShittyDB(){
     let rawdata = fs.readFileSync('shittyDB.json');
@@ -7,108 +8,161 @@ function readShittyDB(){
     return shittyJson;
 }
 
-function writeShittyDB(lastBlock, processed){
+function writeShittyDB(bscLastBlock, bscProcessed, maticLastBlock, maticProcessed){
 
     let shittyJson = {
-        lastBlock: lastBlock,
-        processed: processed
+        bscLastBlock: bscLastBlock,
+        bscProcessed: bscProcessed,
+        maticLastBlock: maticLastBlock,
+        maticProcessed: maticProcessed
     }
 
     let data = JSON.stringify(shittyJson);
     fs.writeFileSync('shittyDB.json', data);
 }
 
+function readJson(json){
+    let rawdata = fs.readFileSync(json);
+    let shittyJson = JSON.parse(rawdata);
+    return shittyJson;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-class recievedObj{
-    constructor(from, tokenId, internalId, nftAddr, txHash, chain){
+class nftObj{
+    constructor(from, tokenId, internalId, nftAddr, txHash, chainId){
         this.from = from;
         this.tokenId = tokenId;
-        this.internalId = internalId;
+        this.xChainInternalId = internalId;
         this.nftAddr = nftAddr;
         this.txHash = txHash;
-        this.chain = chain;
+        this.chainId = chainId;
     }
 }
 
 async function main(){
 
     async function getXChainRecieved(startBlock, endBlock){
-        let filter = reciever.filters.XChainRecieved();
+        let filter = Reciever.filters.XChainRecieved();
 
-        let events = await reciever.queryFilter(filter, startBlock, endBlock);
+        let events = await Reciever.queryFilter(filter, startBlock, endBlock);
         return events;
     }
 
-    async function processEvent(recieved){
-        console.log("Processing... "+recieved.txHash);
+    async function getXChainRelease(startBlock, endBlock){
+        let filter = Vault.filters.XChainRelease();
 
-        vault.
-
-        processed.push(recieved.txHash);
+        let events = await Vault.queryFilter(filter, startBlock, endBlock);
+        return events;
     }
 
-    const rpc = await new hre.ethers.providers.JsonRpcProvider(process.env.RPC_PROVIDER)
-    const owner = new hre.ethers.Wallet(process.env.PRIVATE_KEY0, rpc);
+    async function processXChainRecieved(recieved){
+        console.log("Processing... "+recieved.txHash);
 
-    await hre.run("compile");
+        console.log("Recieved.From: "+recieved.from+ " Recieved.TokenId: "+recieved.tokenId+" Recieved.InternalId: "+recieved.xChainInternalId+" Recieved.NFTAddr: "+recieved.nftAddr+" Recieved.ChainId: "+recieved.chainId)
+        await Vault.registerXChainNFT(recieved.from, recieved.tokenId, recieved.xChainInternalId, recieved.nftAddr, recieved.chainId);
 
-    const Reciever = await hre.ethers.getContractFactory("XChainVault");
-    //It probably wont be owner at the end of this.
-    const reciever = await Reciever.attach(
-        "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-    );
+        bscProcessed.push(recieved.txHash);
+    }
 
-    const Vault = await hre.ethers.getContractFactory("Vault");
+    async function processXChainRelease(nft){
+        console.log("Releasing... "+nft.txHash);
 
-    const vault = await Vault.attach(
-        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
-    );
+        console.log("NFT.From: "+nft.from+ " NFT.TokenId: "+nft.tokenId+" NFT.InternalId: "+nft.xChainInternalId+" NFT.NFTAddr: "+nft.nftAddr+" NFT.ChainId: "+nft.chainId)
+        
+        let increaseGas = {gasPrice: 8000000000, gasLimit: 3000000}
+        
+        await Reciever.releaseNFT(nft.from, nft.xChainInternalId, increaseGas);
 
+        maticProcessed.push(nft.txHash);
+    }
 
-    console.log("Listener connected to: ", reciever.address);
+    
+    
+
+    const matic_rpc = new hre.ethers.providers.JsonRpcProvider(process.env.MATIC_RPC_PROVIDER);
+    const matic_wallet = new hre.ethers.Wallet(process.env.METAMASK_PK0, matic_rpc);
+
+    const bsc_rpc = new hre.ethers.providers.JsonRpcProvider(process.env.BSC_RPC_PROVIDER);
+    const bsc_wallet = new hre.ethers.Wallet(process.env.METAMASK_PK0, bsc_rpc);
+
+    xChainVaultABI = readJson("xChainVaultABI.json");
+    const recieverAddr = "0xeC3676Ca25d450E0F799bAD6324274fBB59f8494";
+    const Reciever = new Contract(recieverAddr, xChainVaultABI, bsc_wallet);
+
+    VaultABI = readJson("VaultABI.json");
+    const vaultAddr = "0xb7Fa8640CAEf4b244398Af50be2cF62BD1cfbDaB";
+    const Vault = new Contract(vaultAddr, VaultABI, matic_wallet);
+
+    console.log("Listener connected to: ", Reciever.address);
+    console.log("Calls made to: "+Vault.address);
     
     const shittyJson = readShittyDB();
     
-    let startBlock = shittyJson.lastBlock;
+    let bscStartBlock = shittyJson.bscLastBlock;
+    let maticStartBlock = shittyJson.maticLastBlock;
     
-    let processed = Array.from(shittyJson.processed);
-    console.log("ProcessedStartLength: "+processed.length);
+    let bscProcessed = Array.from(shittyJson.bscProcessed);
+    let maticProcessed = Array.from(shittyJson.maticProcessed);
+    console.log("bscProcessedStartLength: "+bscProcessed.length);
+    console.log("maticProcessedStartLength: "+maticProcessed.length);
 
     while(true){
 
         await sleep(5000);
-        const endBlock = await rpc.getBlockNumber();
+        let bscEndBlock = await bsc_rpc.getBlockNumber();
+        let maticEndBlock = await matic_rpc.getBlockNumber();
 
-        console.log("StartBlock:" + startBlock);
-        console.log("EndBlock: " + endBlock);
+        console.log("bscStartBlock:" + bscStartBlock);
+        console.log("bscEndBlock: " + bscEndBlock);
 
-        let events = await getXChainRecieved(startBlock, endBlock);
+        let recievedEvents = await getXChainRecieved(bscStartBlock, bscEndBlock);
 
-        if(events.length >= 0 && startBlock != endBlock){
-\            
-            for(let i=0; i<events.length; i++){
-                let txHash = events[i].transactionHash;
-                if(!processed.includes(txHash)){
-                    console.log("Processing Tx");
-                    let args = events[i].args;
-                    let recieved = new recievedObj(args.from, args.tokenId, args.internalId, args.nftAddr, txHash, args.chain);
+        if(recievedEvents.length >= 0 && bscStartBlock != bscEndBlock){           
+            for(let i=0; i<recievedEvents.length; i++){
+                let txHash = recievedEvents[i].transactionHash;
+                if(!bscProcessed.includes(txHash)){
+                    console.log("Processing Recieved Tx");
+                    let args = recievedEvents[i].args;
+                    console.log(args);
+                    let recieved = new nftObj(args.from, args.tokenId, args.xChainInternalId, args.nftAddr, txHash, args.chainId);
                     
-                    await processEvent(recieved);
+                    await processXChainRecieved(recieved);
                 }
             }
-
-            writeShittyDB(endBlock, processed);
-
-            
-
         }
         else{
-            console.log("No New Events Recieved");
+            console.log("No BSC Events Recieved");
         }
 
-        startBlock = endBlock;
+        console.log("maticStartBlock:" + maticStartBlock);
+        console.log("maticEndBlock: " + maticEndBlock);
+
+        let releaseEvents = await getXChainRelease(maticStartBlock, maticEndBlock);
+
+        if(releaseEvents.length >= 0 && maticStartBlock != maticEndBlock){           
+            for(let i=0; i<releaseEvents.length; i++){
+                let txHash = releaseEvents[i].transactionHash;
+                if(!maticProcessed.includes(txHash)){
+                    console.log("Processing Release Tx");
+                    let args = releaseEvents[i].args;
+                    console.log(args);
+                    let release = new nftObj(args.to, args.tokenId, args.xChainInternalId, args.nftAddr, txHash, args.chainId);
+                    
+                    await processXChainRelease(release);
+                }
+            }
+        }            
+
+        else{
+            console.log("No Matic Events Recieved");
+        }
+
+        writeShittyDB(bscEndBlock, bscProcessed, maticEndBlock, maticProcessed);
+
+        bscStartBlock = bscEndBlock;
+        maticStartBlock = maticEndBlock;
 
     }
 

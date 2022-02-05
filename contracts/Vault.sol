@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "./NFToken.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 //import {FixedMath} from "./FixedMath.sol";
 
@@ -12,7 +12,8 @@ contract Vault is ERC721Holder, AccessControl{
     //using FixedMath for int256;
 
     struct RecievedNFT{
-        string chain;
+        uint256 chainId;
+        uint256 xChainInternalId;
         //true if nft is NOT XChain
         bool native;
         uint256 internalId;
@@ -25,34 +26,20 @@ contract Vault is ERC721Holder, AccessControl{
         bool owned;
     }
 
-    struct Bucket{
-        string chain; 
-        bool native; //true if nft is NOT XChain
-        uint256 internalId;
-        uint256 tokenId;
-        address tokenAddr;
-        uint256 tokenPrice;
-        bool owned; // cross chain stuff 
-        uint256[] NFTIds; 
-    }
-
     bytes32 public constant OWNER = keccak256("OWNER");
     bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
 
     address wEthAddr;
 
     uint256 internalIdCounter = 0;
-    uint256 internalIdCounterBuckets = 0;
 
-    event XChainRegistered(address from, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
-    event XChainRelease(address to, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
+    event XChainRegistered(address from, uint256 tokenId, uint256 internalId, uint256 xChainInternalId, address nftAddr, uint256 chainId);
+    event XChainRelease(address to, uint256 tokenId, uint256 internalId, uint256 xChainInternalId, address nftAddr, uint256 chainId);
     event Recieved(address from, uint256 tokenId, uint256 internalId, address nftAddr);
     event Released(address to, uint256 tokenId, uint256 internalId, address nftAddr);
     
     //mapping(interalIds => RecievedNFT)
     mapping(uint256 => RecievedNFT) recievedNfts;
-
-    mapping(uint256 => Bucket) buckets;
 
     //mapping(wallet => mapping(internalIds => amountDeposited));
     mapping(address => mapping(uint256 => uint256)) deposits;
@@ -60,7 +47,6 @@ contract Vault is ERC721Holder, AccessControl{
     //Keep track of all Internal Ids ever owned by a user.
     mapping(address => uint256[]) ownedInternalIds;
     mapping(address => uint256) numIdsOwned;
-
 
     constructor(address _wEthAddr, address oracle){
         wEthAddr = _wEthAddr;
@@ -72,25 +58,6 @@ contract Vault is ERC721Holder, AccessControl{
         _setRoleAdmin(ORACLE_ROLE, OWNER);
     }
 
-    function createBucket(uint256[] memory NFTIds, uint256 numNFTs, uint256 internalId, uint256 supply, string memory name, string memory ticker) public{
-        Bucket memory bucket;
-
-        bucket.internalId = internalId; 
-
-        NFToken BUCK = ERCDeployer(address(this), internalId, supply, name, ticker); 
-
-        bucket.tokenId = hashIds(NFTIds, numNFTs);
-        bucket.tokenAddr = address(BUCK);
-        bucket.tokenPrice = 1; // set this later (right now 1 wrapped eth per bucket)
-
-        bucket.NFTIds = NFTIds; 
-
-    }
-
-    function hashIds(uint256[] memory NFTIds, uint256 numNFTs) internal returns(uint256){
-
-    }
-
     function grantOracle(address account) public onlyRole(OWNER){
         _grantRole(ORACLE_ROLE, account);
     }
@@ -99,7 +66,7 @@ contract Vault is ERC721Holder, AccessControl{
     TODO: FIGURE OUT HOW TO HANDLE XCHAIN INTERNALIDS WITHOUT FUCKING EVERYTHING UP!!!
      */
 
-    function registerXChainNFT(address sender, uint256 tokenId, uint256 internalId, address nftAddr, string memory chain) public onlyRole(ORACLE_ROLE) {
+    function registerXChainNFT(address sender, uint256 tokenId, uint256 xChainInternalId, address nftAddr, uint256 chainId) public onlyRole(ORACLE_ROLE) {
         RecievedNFT memory recievedNft;
         recievedNft.internalId = internalIdCounter;
         recievedNft.nftAddr = nftAddr; 
@@ -107,16 +74,17 @@ contract Vault is ERC721Holder, AccessControl{
         recievedNft.tokenId = tokenId;
         recievedNft.tokenPrice = 1;
         recievedNft.owned = true;
-        recievedNft.chain = chain;
+        recievedNft.chainId = chainId;
+        recievedNft.xChainInternalId = xChainInternalId;
         recievedNft.native = false;
 
         recievedNfts[internalIdCounter] = recievedNft;
         
         //Keep track of all Internal Ids ever owned by a user.
-        ownedInternalIds[recievedNft.nftAddr].push(recievedNft.internalId);
-        numIdsOwned[recievedNft.nftAddr] += 1;
+        ownedInternalIds[recievedNft.sender].push(recievedNft.internalId);
+        numIdsOwned[recievedNft.sender] += 1;
 
-        emit XChainRegistered(sender, tokenId, internalId, nftAddr, chain);
+        emit XChainRegistered(recievedNft.sender, recievedNft.tokenId, recievedNft.internalId, recievedNft.xChainInternalId, recievedNft.nftAddr, recievedNft.chainId);
 
         internalIdCounter += 1;
     }
@@ -152,8 +120,8 @@ contract Vault is ERC721Holder, AccessControl{
 
     // For bucket buys
     function buyTokens(uint256 internalId, uint256 amountOfFrac, address buyer) public{
-        ERC20 frac = ERC20(getNFTokenAddr(internalId));
-        ERC20 wEth = ERC20(getwEthAddr());
+        IERC20 frac = IERC20(getNFTokenAddr(internalId));
+        IERC20 wEth = IERC20(getwEthAddr());
         uint256 amountOfwEth = calculateAmountOfwEth(amountOfFrac, internalId);
         require(frac.balanceOf(address(this)) >= amountOfFrac, "There are not enough tokens to buy");
         require(wEth.transferFrom(buyer, address(this), amountOfwEth), "Transfer of wEth failed");
@@ -162,8 +130,8 @@ contract Vault is ERC721Holder, AccessControl{
 
     // For bucket sells
     function sellTokens(uint256 internalId, uint256 amountOfwEth, address seller) public{
-        ERC20 frac = ERC20(getNFTokenAddr(internalId));
-        ERC20 wEth = ERC20(getwEthAddr());
+        IERC20 frac = IERC20(getNFTokenAddr(internalId));
+        IERC20 wEth = IERC20(getwEthAddr());
         uint256 amountOfFrac = calculateAmountOfFrac(amountOfwEth, internalId);
         require(frac.balanceOf(seller) >= amountOfFrac, "You do not have enough frac tokens");
         require(frac.transferFrom(seller, address(this), amountOfFrac), "Transfer of frac token failed");
@@ -194,8 +162,8 @@ contract Vault is ERC721Holder, AccessControl{
         recievedNfts[internalIdCounter] = recievedNft;
         
         //Keep track of all Internal Ids ever owned by a user.
-        ownedInternalIds[recievedNft.nftAddr].push(recievedNft.internalId);
-        numIdsOwned[recievedNft.nftAddr] += 1;
+        ownedInternalIds[recievedNft.sender].push(recievedNft.internalId);
+        numIdsOwned[recievedNft.sender] += 1;
 
         emit Recieved(recievedNft.sender, recievedNft.tokenId, recievedNft.internalId, recievedNft.nftAddr);
 
@@ -226,7 +194,7 @@ contract Vault is ERC721Holder, AccessControl{
             erc721.transferFrom(address(this), account, getERC721TokenId(internalId));
         }
         else{
-            emit XChainRelease(account, getERC721TokenId(internalId), internalId, getERC721ContractAddr(internalId), getERC721Chain(internalId));
+            emit XChainRelease(account, getERC721TokenId(internalId), internalId, getERC721XChainInternalId(internalId), getERC721ContractAddr(internalId), getERC721ChainId(internalId));
         }
                
         //If nft gets bought out, decrement the senders owned internalIds
@@ -239,8 +207,12 @@ contract Vault is ERC721Holder, AccessControl{
         return recievedNfts[internalId].native;
     }
 
-    function getERC721Chain(uint256 internalId) public view returns(string memory){
-        return recievedNfts[internalId].chain;
+    function getERC721ChainId(uint256 internalId) public view returns(uint256){
+        return recievedNfts[internalId].chainId;
+    }
+
+    function getERC721XChainInternalId(uint256 internalId) public view returns(uint256){
+        return recievedNfts[internalId].xChainInternalId;
     }
 
     function getERC721TokenId(uint256 internalId) public view returns(uint256){

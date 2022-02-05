@@ -30,6 +30,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.2",
     "dotenv": "^16.0.0",
+    "hardhat-contract-sizer": "^2.4.0",
     "mongodb": "^4.3.1"
   }
 }

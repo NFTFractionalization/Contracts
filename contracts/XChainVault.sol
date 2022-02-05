@@ -19,7 +19,7 @@ contract XChainVault is ERC721Holder, AccessControl{
 
     uint256 internalIdCounter = 0;
 
-    string chain;
+    uint256 chainId;
 
     //mapping(interalIds => RecievedNFT)
     mapping(uint256 => RecievedNFT) recievedNfts;
@@ -28,16 +28,16 @@ contract XChainVault is ERC721Holder, AccessControl{
     mapping(address => uint256[]) ownedInternalIds;
     mapping(address => uint256) numIdsOwned;
 
-    event XChainRecieved(address from, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
-    event XChainReleased(address to, uint256 tokenId, uint256 internalId, address nftAddr, string chain);
+    event XChainRecieved(address from, uint256 tokenId, uint256 xChainInternalId, address nftAddr, uint256 chainId);
+    event XChainReleased(address to, uint256 tokenId, uint256 xChainInternalId, address nftAddr, uint256 chainId);
 
     bytes32 public constant OWNER = keccak256("OWNER");
     bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
 
 
-    constructor(address oracle, string memory _chain){
+    constructor(address oracle, uint256 _chainId){
 
-        chain = _chain;
+        chainId = _chainId;
 
         _setupRole(OWNER, msg.sender);
 
@@ -64,7 +64,7 @@ contract XChainVault is ERC721Holder, AccessControl{
         ownedInternalIds[recievedNft.nftAddr].push(recievedNft.internalId);
         numIdsOwned[recievedNft.nftAddr] += 1;
 
-        emit XChainRecieved(recievedNft.sender, recievedNft.tokenId, recievedNft.internalId, recievedNft.nftAddr, chain);
+        emit XChainRecieved(recievedNft.sender, recievedNft.tokenId, recievedNft.internalId, recievedNft.nftAddr, chainId);
 
         internalIdCounter += 1;
         return this.onERC721Received.selector;
@@ -77,7 +77,7 @@ contract XChainVault is ERC721Holder, AccessControl{
         //If nft gets bought out, decrement the senders owned internalIds
         numIdsOwned[recievedNfts[internalId].sender] -= 1;
 
-        emit XChainReleased(to, getERC721TokenId(internalId), internalId, getERC721ContractAddr(internalId), chain);
+        emit XChainReleased(to, getERC721TokenId(internalId), internalId, getERC721ContractAddr(internalId), chainId);
     }
 
     function getERC721TokenId(uint256 internalId) public view returns(uint256){
