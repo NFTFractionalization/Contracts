@@ -35,10 +35,22 @@ contract Buckets{
         return nfToken;
     }
 
+    /*
+        Create Bucket:
+    
+        1. Create vault interface
+        2. Make sure all NFTs in bucket have been fractionalized
+        3. Create bucket struct
+        4. Deploy new BUCK token with 0 supply
+        5. Set bucketid to IdCounter, token address to the BUCK address, and the NFTIds 
+        6. Add new bucket struct to bucket mapping
+        7. Increase bucket counter
+        8. Return bucket id
+    */
     function createBucket(uint256[] memory NFTIds, string memory name, string memory ticker) public returns(uint256){
         IVault vault = IVault(vaultAddr);
         for(uint256 i=0; i<NFTIds.length; i++){
-            require(vault.getNFTokenSupply(NFTIds[i]) > 0, "This token has not been minted yet!!!");
+            require(vault.getNFTokenSupply(NFTIds[i]) > 0, "This token has not been minted yet!!!"); 
         }
         
         Bucket memory bucket;
