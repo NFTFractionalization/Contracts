@@ -96,12 +96,13 @@ contract Vault is ERC721Holder, Ownable{
         return wEthAddr;
     }
 
-    function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 internalId) public view returns(uint256){
-        return recievedNfts[internalId].tokenPrice * _amountOfFrac;
+    function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 _internalId) public view returns(uint256){
+        uint256 amount = _amountOfFrac * recievedNfts[_internalId].tokenPrice;
+        return amount;
     }
 
-    function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 internalId) public view returns(uint256){
-        return _amountOfwEth / recievedNfts[internalId].tokenPrice; 
+    function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 _internalId) public view returns(uint256){
+        return _amountOfwEth / recievedNfts[_internalId].tokenPrice; 
     }
 
     //=======================================================

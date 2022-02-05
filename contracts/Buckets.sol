@@ -6,8 +6,8 @@ interface IVault{
     function buyTokens(uint256 internalId, uint256 amount, address buyer) external;
     function sellTokens(uint256 internalId, uint256 amountOfwEthToBuy, address seller) external;
     function getwEthAddr() external returns(address);
-    function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 internalId) external returns(uint256);
-    function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 internalId) external returns(uint256);
+    function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 _internalId) external view returns(uint256);
+    function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 _internalId) external view returns(uint256);
     function getNFTokenSupply(uint256 internalId) external returns(uint256);
 }
 
@@ -73,11 +73,11 @@ contract Buckets{
     //
     //  BUCK price = sum of NFT FRAC prices
     //=========================================
-    function calcBucketPrice(uint256 bucketId, uint256 amountOfBuck) public returns(uint256){
+    function calcBucketPrice(uint256 bucketId, uint256 amountOfBuck) public view returns(uint256){
         IVault vault = IVault(vaultAddr);
         Bucket memory bucket = getBucket(bucketId);
         uint256 price = 0;
-        for(uint256 i; i<bucket.NFTIds.length; i++){
+        for(uint256 i = 0; i<bucket.NFTIds.length; i++){
             //Add price of every FRAC token
             price += vault.calculateAmountOfwEth(amountOfBuck, bucket.NFTIds[i]);
         }
@@ -130,11 +130,15 @@ contract Buckets{
     }
 
     //This is what I should have done instead of the 10000000000 getter functions in the Vault contract!
-    function getBucket(uint256 bucketId) public returns(Bucket memory){
+    function getBucket(uint256 bucketId) public view returns(Bucket memory){
         return buckets[bucketId];
     }
 
-    function getBuckTokenAddr(uint256 bucketId) public returns(address){
+    function getBuckTokenAddr(uint256 bucketId) public view returns(address){
         return buckets[bucketId].tokenAddr;
+    }
+
+    function getNumberBucketsCreated() public view returns(uint256){
+        return bucketIdCounter;
     }
 }
