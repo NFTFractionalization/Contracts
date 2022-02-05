@@ -91,7 +91,7 @@ describe("Greeter", function () {
     await vault.mintTokensForNFT(ethers.utils.parseUnits(String(mintSupply), 18), tokenName, tokenTicker, tokenInternalId, ethers.utils.parseUnits(String(amountToKeep), 18));
 
     const fracTokenAddr = await vault.getNFTokenAddr(0);
-    console.log(fracTokenAddr);
+    //console.log(fracTokenAddr);
     const fracTokenContract = await NFToken.attach(
       fracTokenAddr
     );
@@ -167,29 +167,47 @@ describe("Greeter", function () {
     expect(await buckets.calcBucketPrice(0, 5)).to.equal(25);
     
 
-    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));
-    await wEth.approve(buckets.address, ethers.utils.parseUnits("1000000000000", 18));
-    await buckets.buyBucket(0, ethers.utils.parseUnits(String(buyAmount), 18), owner.address);
+    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));  // Give wEth
+
+    await wEth.approve(buckets.address, ethers.utils.parseUnits("1000000000000", 18));   // Approve transfers for giving wEth to buckets
+    
+    await buckets.buyBucket(0, ethers.utils.parseUnits(String(buyAmount), 18), owner.address);  // Buy 5 BUCK tokens
 
 
 
     const buckTokenAddr = await buckets.getBuckTokenAddr(0);  //Get Bucket0 token address
-    console.log(buckTokenAddr);
+    //console.log(buckTokenAddr);
     const buckTokenContract = await NFToken.attach(
       buckTokenAddr
     );
 
-    expect(await buckTokenContract.totalSupply()).to.equal(5);
+    expect(await buckTokenContract.totalSupply()).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
     
-    //expect(await buckTokenContract.balanceOf(owner.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
+    expect(await buckTokenContract.balanceOf(owner.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
 
-    // for(let i=0; i<numNFTs; i++){
-    //   const fracTokenAddr = await vault.getNFTokenAddr(i);
-    //   const fracTokenContract = await NFToken.attach(
-    //     fracTokenAddr
-    //   );
-    //   expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
-    // }
+    for(let i=0; i<numNFTs; i++){
+      const fracTokenAddr = await vault.getNFTokenAddr(i);
+      const fracTokenContract = await NFToken.attach(
+        fracTokenAddr
+      );
+      expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
+    }
+
+    // Sell 3 bucket tokens
+    const sellAmount = 3;
+
+    await buckets.sellBucket(0, ethers.utils.parseUnits(String(sellAmount), 18));
+
+    expect(await buckTokenContract.totalSupply()).to.equal(ethers.utils.parseUnits("2", 18)); // Check if BUCK is burned
+
+    for(let i=0; i<numNFTs; i++){
+      const fracTokenAddr = await vault.getNFTokenAddr(i);
+      const fracTokenContract = await NFToken.attach(
+        fracTokenAddr
+      );
+      expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits("2", 18));
+    }
+
 
 })});
   

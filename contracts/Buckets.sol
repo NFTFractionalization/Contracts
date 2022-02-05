@@ -2,10 +2,12 @@ pragma solidity ^0.8.0;
 
 import "./NFToken.sol";
 
+// Note: If prototypes don't have the same modifiers as the function, there will be problems
 interface IVault{
     function buyTokens(uint256 internalId, uint256 amount, address buyer) external;
     function sellTokens(uint256 internalId, uint256 amountOfwEthToBuy, address seller) external;
     function getwEthAddr() external returns(address);
+    function getNFTokenAddr(uint256 internalId) external view returns(address);
     function calculateAmountOfwEth(uint256 _amountOfFrac, uint256 _internalId) external view returns(uint256);
     function calculateAmountOfFrac(uint256 _amountOfwEth, uint256 _internalId) external view returns(uint256);
     function getNFTokenSupply(uint256 internalId) external returns(uint256);
@@ -97,6 +99,7 @@ contract Buckets{
     //     return price;
     // }
 
+    // Why do we need to pass an address? Shouldn't it be msg.sender?
     function buyBucket(uint256 bucketId, uint256 amount, address account) public {
         IVault vault = IVault(vaultAddr);
         Bucket memory bucket = getBucket(bucketId);
@@ -120,9 +123,16 @@ contract Buckets{
         NFToken BUCK = NFToken(bucket.tokenAddr);
 
         uint256 sellPrice = calcBucketPrice(bucketId, amount);
+        require(BUCK.balanceOf(msg.sender) >= amount, "You do not have enough BUCK tokens to sell");    // Added require
         BUCK.burn(msg.sender, amount);
         
+        IERC20 FRAC;
         for(uint256 i; i<bucket.NFTIds.length; i++){
+
+            // Aprove all FRAC transactions
+            FRAC = IERC20(vault.getNFTokenAddr(bucket.NFTIds[i]));
+            FRAC.approve(vaultAddr, amount);
+
             //sell every FRAC token and transfer it to this contract
             vault.sellTokens(bucket.NFTIds[i], amount, address(this));
         }
