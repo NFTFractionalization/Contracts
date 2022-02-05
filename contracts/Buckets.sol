@@ -35,18 +35,18 @@ contract Buckets{
         return nfToken;
     }
 
-    /*
-        Create Bucket:
-    
-        1. Create vault interface
-        2. Make sure all NFTs in bucket have been fractionalized
-        3. Create bucket struct
-        4. Deploy new BUCK token with 0 supply
-        5. Set bucketid to IdCounter, token address to the BUCK address, and the NFTIds 
-        6. Add new bucket struct to bucket mapping
-        7. Increase bucket counter
-        8. Return bucket id
-    */
+    //==========================================================================================
+    //  Create Bucket:
+    //    
+    //  1. Create vault interface
+    //  2. Make sure all NFTs in bucket have been fractionalized
+    //  3. Create bucket struct
+    //  4. Deploy new BUCK token with 0 supply
+    //  5. Set bucketid to IdCounter, token address to the BUCK address, and the NFTIds 
+    //  6. Add new bucket struct to bucket mapping
+    //  7. Increase bucket counter
+    //  8. Return bucket id
+    //==========================================================================================
     function createBucket(uint256[] memory NFTIds, string memory name, string memory ticker) public returns(uint256){
         IVault vault = IVault(vaultAddr);
         for(uint256 i=0; i<NFTIds.length; i++){
@@ -68,31 +68,34 @@ contract Buckets{
         return(bucket.bucketId);
     }
 
-    //@Dan, I'm hoping im using your calculate functions right lol
-
-    //Calc buy price
-    function calcBucketPrice(uint256 bucketId, uint256 amountToBuy) public returns(uint256){
+    //=========================================
+    //  Calculate Bucket Price (buy or sell)
+    //
+    //  BUCK price = sum of NFT FRAC prices
+    //=========================================
+    function calcBucketPrice(uint256 bucketId, uint256 amountOfBuck) public returns(uint256){
         IVault vault = IVault(vaultAddr);
         Bucket memory bucket = getBucket(bucketId);
         uint256 price = 0;
         for(uint256 i; i<bucket.NFTIds.length; i++){
             //Add price of every FRAC token
-            price += vault.calculateAmountOfwEth(amountToBuy, bucket.NFTIds[i]);
+            price += vault.calculateAmountOfwEth(amountOfBuck, bucket.NFTIds[i]);
         }
         return price;
     }
 
-    //Calc sell "Price"
-    function calcSellPrice(uint256 bucketId, uint256 amountToSell) public returns(uint256){
-        IVault vault = IVault(vaultAddr);
-        Bucket memory bucket = getBucket(bucketId);
-        uint256 price = 0;
-        for(uint256 i; i<bucket.NFTIds.length; i++){
-            //Add price of every FRAC token
-            price += vault.calculateAmountOfFrac(amountToSell, bucket.NFTIds[i]);
-        }
-        return price;
-    }
+
+    // //Calc sell "Price"
+    // function calcSellPrice(uint256 bucketId, uint256 amountToSell) public returns(uint256){
+    //     IVault vault = IVault(vaultAddr);
+    //     Bucket memory bucket = getBucket(bucketId);
+    //     uint256 price = 0;
+    //     for(uint256 i; i<bucket.NFTIds.length; i++){
+    //         //Add price of every FRAC token
+    //         price += vault.calculateAmountOfFrac(amountToSell, bucket.NFTIds[i]);
+    //     }
+    //     return price;
+    // }
 
     function buyBucket(uint256 bucketId, uint256 amount, address account) public {
         IVault vault = IVault(vaultAddr);
@@ -116,7 +119,7 @@ contract Buckets{
         IERC20 wEth = IERC20(vault.getwEthAddr());
         NFToken BUCK = NFToken(bucket.tokenAddr);
 
-        uint256 sellPrice = calcSellPrice(bucketId, amount);
+        uint256 sellPrice = calcBucketPrice(bucketId, amount);
         BUCK.burn(msg.sender, amount);
         
         for(uint256 i; i<bucket.NFTIds.length; i++){
