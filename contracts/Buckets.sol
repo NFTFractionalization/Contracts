@@ -123,7 +123,7 @@ contract Buckets{
         BUCK.burn(msg.sender, amount);
         
         for(uint256 i; i<bucket.NFTIds.length; i++){
-            //buy every FRAC token and transfer it to this contract
+            //sell every FRAC token and transfer it to this contract
             vault.sellTokens(bucket.NFTIds[i], amount, address(this));
         }
         require(wEth.transfer(address(this), sellPrice), "Transfer of wEth failed");
