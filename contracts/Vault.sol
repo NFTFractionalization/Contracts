@@ -105,13 +105,13 @@ contract Vault is ERC721Holder, Ownable{
     }
 
     // For bucket buys
-    function buyTokens(uint256 internalId, uint256 amountOfFrac, address buyer) public{
+    function buyTokens(uint256 internalId, uint256 FracToBuy, address buyer) public{
         IERC20 frac = IERC20(getNFTokenAddr(internalId));
         IERC20 wEth = IERC20(getwEthAddr());
-        uint256 amountOfwEth = calculateAmountOfwEth(amountOfFrac, internalId);
-        require(frac.balanceOf(address(this)) >= amountOfFrac, "There are not enough tokens to buy");
-        require(wEth.transferFrom(buyer, address(this), amountOfwEth), "Transfer of wEth failed");
-        require(frac.transfer( buyer, amountOfFrac), "Transfer of frac token failed");
+        uint256 costInwEth = calculateAmountOfwEth(FracToBuy, internalId);
+        require(frac.balanceOf(address(this)) >= FracToBuy, "There are not enough FRAC tokens to buy");
+        require(wEth.transferFrom(buyer, address(this), costInwEth), "Transfer of wEth failed");
+        require(frac.transfer( buyer, FracToBuy), "Transfer of FRAC token failed");
     }
 
     // For bucket sells
