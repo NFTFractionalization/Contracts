@@ -201,7 +201,7 @@ contract Vault is ERC721Holder, Ownable{
             erc721.transferFrom(address(this), account, getERC721TokenId(internalId));
         }
         else{
-            emit XChainRelease(account, getERC721TokenId(internalId), internalId, getERC721XChainInternalId(internalId), getERC721ContractAddr(internalId), getERC721ChainId(internalId));
+            emit XChainRelease(account, getERC721TokenId(internalId), internalId, recievedNfts[internalId].xChainInternalId, getERC721ContractAddr(internalId), getERC721ChainId(internalId));
         }
                
         //If nft gets bought out, decrement the senders owned internalIds
@@ -218,10 +218,6 @@ contract Vault is ERC721Holder, Ownable{
         return recievedNfts[internalId].chainId;
     }
 
-    function getERC721XChainInternalId(uint256 internalId) public view returns(uint256){
-        return recievedNfts[internalId].xChainInternalId;
-    }
-
     function getERC721TokenId(uint256 internalId) public view returns(uint256){
         return recievedNfts[internalId].tokenId;
     }
@@ -235,12 +231,14 @@ contract Vault is ERC721Holder, Ownable{
         return nfToken.totalSupply();
     }
 
+//THIS FUNCTION IN THEORY WORKS, BUT ITS MAKING THE CONTRACT TOO BIG AND THIS THING IS DUE TOMORROW!!!!
+/*
     function withdrawNFToken(uint256 internalId, address account, uint256 amount) public {
         require(amount <= getDepositAmount(internalId, account), "You do not have that many tokens");
         deposits[account][internalId] -= amount;
         NFToken nfToken = NFToken(getNFTokenAddr(internalId));
         nfToken.transfer(account, amount);
-    }
+    }*/
 
     function getDepositAmount(uint256 internalId, address account) public view returns(uint256){
         return deposits[account][internalId];
@@ -290,7 +288,6 @@ contract Vault is ERC721Holder, Ownable{
         return numIdsOwned[account];
     }
 
-/*
     // If anything is broken... its because of this function
     function getOwnedInternalIds(address account) public view returns(uint256[] memory){
         uint256 accountNumIdsOwned = getNumIdsOwned(account);
@@ -303,5 +300,5 @@ contract Vault is ERC721Holder, Ownable{
             }
         }
         return(ownedIds);
-    }*/
+    }
 }

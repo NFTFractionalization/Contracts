@@ -12,4 +12,9 @@ contract wEth is ERC20 {
         _mint(msg.sender, amountToGive);
 
     }
+
+    function giveAccount(address account, uint256 amountToGive) public {
+        _mint(msg.sender, amountToGive);
+
+    }
 }

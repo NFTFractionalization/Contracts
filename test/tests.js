@@ -80,14 +80,19 @@ describe("Greeter", function () {
 
     const tokenId = await minter.mint(owner.address);
     
+    
     const ownerNFTBalance = await minter.balanceOf(owner.address);
     expect(ownerNFTBalance).to.equal(1);
 
+    const tokenId2 = await minter.mint(owner.address);
     await minter.approve(vault.address, 1)
+    await minter.approve(vault.address, 2)
     await minter.safeTransfer(owner.address, vault.address, 1)
 
     expect(await vault.getNumberDepositedERC721s()).to.equal(1);
-    
+
+    await minter.safeTransfer(owner.address, vault.address, 2)
+
     await vault.mintTokensForNFT(ethers.utils.parseUnits(String(mintSupply), 18), tokenName, tokenTicker, tokenInternalId, ethers.utils.parseUnits(String(amountToKeep), 18));
 
     const fracTokenAddr = await vault.getNFTokenAddr(0);
@@ -125,6 +130,9 @@ describe("Greeter", function () {
     expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43 - 20);
     expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43 - 20);
     expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43 + 20);
+  
+  
+    console.log(await vault.getOwnedInternalIds(owner.address));
   })
 
   it("Should deposit 5 NFT into vault and mint tokens into contract, create a bucket, and allow buying/selling of BUCK tokens", async function (){    
@@ -210,4 +218,3 @@ describe("Greeter", function () {
 
 
 })});
-  
