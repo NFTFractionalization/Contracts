@@ -70,16 +70,19 @@ describe("Greeter", function () {
     })
 
   it("Should deposit NFT into vault and mint tokens into contract", async function (){    
-    const [owner] = await ethers.getSigners();
+    
+    const [owner] = await ethers.getSigners();  // Get HOLDER address
 
+    //
+    //  FRAC token minting information
+    //
     const mintSupply = 1000000;
     const tokenName = "Frac";
     const tokenTicker = "FRAC";
     const amountToKeep = 500000;
     const tokenInternalId = 0;
 
-    const tokenId = await minter.mint(owner.address);
-    
+    const tokenId = await minter.mint(owner.address); 
     
     const ownerNFTBalance = await minter.balanceOf(owner.address);
     expect(ownerNFTBalance).to.equal(1);
@@ -101,38 +104,38 @@ describe("Greeter", function () {
       fracTokenAddr
     );
 
-    /*
-      frac token supply and balance testing
-    */
-    expect((await fracTokenContract.totalSupply()) /10**18).to.equal(1000000);
-    expect((await fracTokenContract.balanceOf(vault.address) ) / 10**18).to.equal(500000);
-    expect((await fracTokenContract.balanceOf(owner.address) ) / 10**18).to.equal(500000);
-    expect((await vault.getNFTokenBalance(tokenInternalId, vault.address)) / 10**18).to.equal(500000);
-    expect((await vault.getNFTokenBalance(tokenInternalId, owner.address)) / 10**18).to.equal(500000);
+    //================================================
+    //  FRAC token minting and supply distribution
+    //================================================
+    expect((await fracTokenContract.totalSupply()) /10**18).to.equal(1000000);  // Check total supply of FRAC token
+    expect((await fracTokenContract.balanceOf(vault.address) ) / 10**18).to.equal(500000);  // VAULT has 50% of FRAC
+    expect((await fracTokenContract.balanceOf(owner.address) ) / 10**18).to.equal(500000);  // HOLDER has 50% of FRAC
+    expect((await vault.getNFTokenBalance(tokenInternalId, vault.address)) / 10**18).to.equal(500000);  // Check Vault helper: VAULT balance
+    expect((await vault.getNFTokenBalance(tokenInternalId, owner.address)) / 10**18).to.equal(500000);  // check Vault helper: HOLDER balance
 
-    /*
-      frac token buying 
-    */
-    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));
-    await wEth.approve(vault.address, ethers.utils.parseUnits("1000000000000", 18));
-    await vault.buyTokensIndividual(tokenInternalId, ethers.utils.parseUnits("43", 18));
-    expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43);
-    expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43);
-    expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43);
-    expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43);
+    //=======================================
+    //  HOLDER buying 43 more FRAC tokens
+    //=======================================
+    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));  
+    await wEth.approve(vault.address, ethers.utils.parseUnits("1000000000000", 18));  
+    await vault.buyTokensIndividual(tokenInternalId, ethers.utils.parseUnits("43", 18));      // HOLDER buys 43 FRAC tokens
+    expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43);       // HOLDER lost 43 wEth
+    expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43);                       // VAULT gained 43 wEth
+    expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43); // HOLDER gained 43 FRAC 
+    expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43); // VAULT lost 43 FRAC
 
-    /*
-      frac token selling
-    */
+    //===================================
+    //  HOLDER selling 20 FRAC tokens
+    //===================================
     await fracTokenContract.approve(vault.address, ethers.utils.parseUnits("1000000", 18))
-    await vault.sellTokensIndividual(tokenInternalId, ethers.utils.parseUnits("20", 18));
-    expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43 + 20);
-    expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43 - 20);
-    expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43 - 20);
-    expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43 + 20);
+    await vault.sellTokensIndividual(tokenInternalId, ethers.utils.parseUnits("20", 18));             // HOLDER sells 20 FRAC tokens  
+    expect(await wEth.balanceOf(owner.address) / 10**18).to.almost.equal(1000000000000 - 43 + 20);        // HOLDER gained 20 wEth
+    expect(await wEth.balanceOf(vault.address) / 10**18).to.almost.equal(43 - 20);                        // VAULT lost 20 wEth
+    expect(await fracTokenContract.balanceOf(owner.address) / 10**18).to.almost.equal(500000 + 43 - 20);  // HOLDER lost 20 FRAC
+    expect(await fracTokenContract.balanceOf(vault.address) / 10**18).to.almost.equal(500000 - 43 + 20);  // VAULT gained 20 FRAC
   
   
-    console.log(await vault.getOwnedInternalIds(owner.address));
+    //console.log(await vault.getOwnedInternalIds(owner.address));
   })
 
   it("Should deposit 5 NFT into vault and mint tokens into contract, create a bucket, and allow buying/selling of BUCK tokens", async function (){    
@@ -168,20 +171,21 @@ describe("Greeter", function () {
 
     expect(await buckets.getNumberBucketsCreated()).to.equal(1);  // Verify that bucket was created
 
-    // Buy 5 bucket tokens
+    //===========================
+    //  HOLDER buys 5 BUCK
+    //===========================
     const buyAmount = 5;
+
     // Verify prices
     expect(await vault.calculateAmountOfwEth(5, 0)).to.equal(5);
     expect(await buckets.calcBucketPrice(0, 5)).to.equal(25);
     
 
-    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));  // Give wEth
-
+    await wEth.give(ethers.utils.parseUnits("1000000000000", 18));  // Give wEth to HOLDER
     await wEth.approve(buckets.address, ethers.utils.parseUnits("1000000000000", 18));   // Approve transfers for giving wEth to buckets
     
-    await buckets.buyBucket(0, ethers.utils.parseUnits(String(buyAmount), 18), owner.address);  // Buy 5 BUCK tokens
 
-
+    await buckets.buyBucket(0, ethers.utils.parseUnits(String(buyAmount), 18), owner.address);  // Buy 5 BUCK 
 
     const buckTokenAddr = await buckets.getBuckTokenAddr(0);  //Get Bucket0 token address
     //console.log(buckTokenAddr);
@@ -189,31 +193,35 @@ describe("Greeter", function () {
       buckTokenAddr
     );
 
-    expect(await buckTokenContract.totalSupply()).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
+    expect(await buckTokenContract.totalSupply()).to.equal(ethers.utils.parseUnits(String(buyAmount), 18)); // 5 BUCK are minted
     
-    expect(await buckTokenContract.balanceOf(owner.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
+    expect(await buckTokenContract.balanceOf(owner.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));  // HOLDER gained 5 BUCK
 
     for(let i=0; i<numNFTs; i++){
       const fracTokenAddr = await vault.getNFTokenAddr(i);
       const fracTokenContract = await NFToken.attach(
         fracTokenAddr
       );
-      expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));
+      expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits(String(buyAmount), 18));  // BUCKET VAULT has 5 of each FRAC
     }
 
-    // Sell 3 bucket tokens
+
+    //=============================
+    // HOLDER sells 3 BUCK tokens
+    //=============================
     const sellAmount = 3;
 
-    await buckets.sellBucket(0, ethers.utils.parseUnits(String(sellAmount), 18));
+    await buckets.sellBucket(0, ethers.utils.parseUnits(String(sellAmount), 18)); // Sell 3 BUCK 
 
-    expect(await buckTokenContract.totalSupply()).to.equal(ethers.utils.parseUnits("2", 18)); // Check if BUCK is burned
+    expect(await buckTokenContract.totalSupply()).to.equal(ethers.utils.parseUnits("2", 18)); // BUCK is burned
 
+    // FRAC address
     for(let i=0; i<numNFTs; i++){
       const fracTokenAddr = await vault.getNFTokenAddr(i);
       const fracTokenContract = await NFToken.attach(
         fracTokenAddr
       );
-      expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits("2", 18));
+      expect(await fracTokenContract.balanceOf(buckets.address)).to.equal(ethers.utils.parseUnits("2", 18));  // HOLDER lost 3 of each FRAC
     }
 
 
