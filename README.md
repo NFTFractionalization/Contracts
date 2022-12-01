@@ -1,3 +1,2 @@
 # Fractionalization Contracts!
-# See Frontend At:
-https://github.com/NFTFractionalization/buckets-frontend/
+Org Link: https://github.com/NFTFractionalization
